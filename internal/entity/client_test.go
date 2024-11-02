@@ -42,3 +42,14 @@ func TestUpdateClient(t *testing.T) {
 	assert.Equal(t, newEmail, client.Email)
 	assert.NotZero(t, client.UpdatedAt)
 }
+
+func TestAddAccount(t *testing.T) {
+	client, _ := NewClient("any_name", "any_email")
+	account := NewAccount(client)
+
+	err := client.AddAccount(account)
+	assert.Nil(t, err)
+
+	assert.Len(t, client.Accounts, 1)
+	assert.Equal(t, account, client.Accounts[0])
+}
