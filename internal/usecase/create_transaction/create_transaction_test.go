@@ -4,35 +4,13 @@ import (
 	"testing"
 
 	"github.com/mwives/microservices-fc-walletcore/internal/entity"
+	"github.com/mwives/microservices-fc-walletcore/internal/usecase/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-type TransactionGatewayMock struct {
-	mock.Mock
-}
-
-func (m *TransactionGatewayMock) Create(transaction *entity.Transaction) error {
-	args := m.Called(transaction)
-	return args.Error(0)
-}
-
-type AccountGatewayMock struct {
-	mock.Mock
-}
-
-func (m *AccountGatewayMock) Create(account *entity.Account) error {
-	args := m.Called(account)
-	return args.Error(0)
-}
-
-func (m *AccountGatewayMock) FindByID(id string) (*entity.Account, error) {
-	args := m.Called(id)
-	return args.Get(0).(*entity.Account), args.Error(1)
-}
-
 func TestCreateTransactionUseCase_Execute(t *testing.T) {
-	transactionGatewayMock := &TransactionGatewayMock{}
+	transactionGatewayMock := &mocks.TransactionGatewayMock{}
 	transactionGatewayMock.On("Create", mock.Anything).Return(nil)
 
 	clientAccountFrom, _ := entity.NewClient("any_name", "any_email")
@@ -43,7 +21,7 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 	accountTo := entity.NewAccount(clientAccountTo)
 	accountTo.Credit(100)
 
-	accountGatewayMock := &AccountGatewayMock{}
+	accountGatewayMock := &mocks.AccountGatewayMock{}
 	accountGatewayMock.On("FindByID", mock.Anything).Return(accountFrom, nil)
 	accountGatewayMock.On("FindByID", mock.Anything).Return(accountTo, nil)
 
