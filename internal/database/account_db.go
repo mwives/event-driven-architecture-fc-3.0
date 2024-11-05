@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/mwives/microservices-fc-walletcore/internal/entity"
 )
@@ -22,6 +23,7 @@ func (a *AccountDB) FindByID(ID string) (*entity.Account, error) {
 		client  entity.Client
 	)
 	account.Client = &client
+	var accountCreatedAtBytes, clientCreatedAtBytes []byte
 
 	err := a.DB.QueryRow(`
 		SELECT 
@@ -34,13 +36,24 @@ func (a *AccountDB) FindByID(ID string) (*entity.Account, error) {
 		WHERE 
 			a.id = ?`, ID).
 		Scan(
-			&account.ID, &account.Client.ID, &account.Balance, &account.CreatedAt,
-			&account.Client.ID, &account.Client.Name, &account.Client.Email, &account.Client.CreatedAt,
+			&account.ID, &account.Client.ID, &account.Balance, &accountCreatedAtBytes,
+			&account.Client.ID, &account.Client.Name, &account.Client.Email, &clientCreatedAtBytes,
 		)
-
 	if err != nil {
 		return nil, err
 	}
+
+	accountCreatedAt, err := time.Parse("2006-01-02 15:04:05", string(accountCreatedAtBytes))
+	if err != nil {
+		return nil, err
+	}
+	account.CreatedAt = accountCreatedAt
+
+	clientCreatedAt, err := time.Parse("2006-01-02 15:04:05", string(clientCreatedAtBytes))
+	if err != nil {
+		return nil, err
+	}
+	account.Client.CreatedAt = clientCreatedAt
 
 	return &account, nil
 }
