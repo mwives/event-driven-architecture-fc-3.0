@@ -1,12 +1,14 @@
 package create_account
 
 import (
+	"log"
+
 	"github.com/mwives/microservices-fc-walletcore/internal/entity"
 	"github.com/mwives/microservices-fc-walletcore/internal/gateway"
 )
 
 type CreateAccountInputDTO struct {
-	ClientID string
+	ClientID string `json:"client_id"`
 }
 
 type CreateAccountOutputDTO struct {
@@ -30,6 +32,7 @@ func NewCreateAccountUseCase(
 func (uc *CreateAccountUseCase) Execute(input CreateAccountInputDTO) (*CreateAccountOutputDTO, error) {
 	client, err := uc.ClientGateway.FindByID(input.ClientID)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
