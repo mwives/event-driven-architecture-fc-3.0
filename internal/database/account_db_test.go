@@ -19,8 +19,8 @@ func (s *AccountDbTestSuite) SetupSuite() {
 	s.Nil(err)
 	s.db = db
 
-	db.Exec("CREATE TABLE accounts (id TEXT PRIMARY KEY, client_id TEXT, balance INTEGER, created_at DATETIME)")
-	db.Exec("CREATE TABLE clients (id TEXT PRIMARY KEY, name TEXT, email TEXT, created_at DATETIME)")
+	db.Exec("CREATE TABLE accounts (id VARCHAR(255) PRIMARY KEY, client_id VARCHAR(255), balance INT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+	db.Exec("CREATE TABLE clients (id VARCHAR(255) PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
 
 	s.accountDB = NewAccountDB(db)
 }

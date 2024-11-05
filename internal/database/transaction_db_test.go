@@ -23,9 +23,9 @@ func (s *TransactionDBTestSuite) SetupSuite() {
 	s.Nil(err)
 	s.db = db
 
-	db.Exec("CREATE TABLE clients (id TEXT PRIMARY KEY, name TEXT, email TEXT, created_at DATETIME)")
-	db.Exec("CREATE TABLE accounts (id TEXT PRIMARY KEY, client_id TEXT, balance INTEGER, created_at DATETIME)")
-	db.Exec("CREATE TABLE transactions (id TEXT PRIMARY KEY, account_id_from TEXT, account_id_to TEXT, amount INTEGER, created_at DATETIME)")
+	db.Exec("CREATE TABLE clients (id VARCHAR(255) PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+	db.Exec("CREATE TABLE accounts (id VARCHAR(255) PRIMARY KEY, client_id VARCHAR(255), balance INT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+	db.Exec("CREATE TABLE transactions (id VARCHAR(255) PRIMARY KEY, account_id_from VARCHAR(255), account_id_to VARCHAR(255), amount INT, created_at TIMESTAMP)")
 
 	// Create clients
 	client, err := entity.NewClient("any_name", "any_email")
