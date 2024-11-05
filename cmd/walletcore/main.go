@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/mwives/microservices-fc-walletcore/internal/web"
 	"github.com/mwives/microservices-fc-walletcore/internal/web/webserver"
 	"github.com/mwives/microservices-fc-walletcore/pkg/events"
+	"github.com/mwives/microservices-fc-walletcore/pkg/uow"
 )
 
 func main() {
@@ -31,12 +33,21 @@ func main() {
 
 	clientDB := database.NewClientDB(db)
 	accountDB := database.NewAccountDB(db)
-	transactionDB := database.NewTransactionDB(db)
+
+	ctx := context.Background()
+	uow := uow.NewUow(ctx, db)
+
+	uow.Register("AccountDB", func(tx *sql.Tx) interface{} {
+		return database.NewAccountDB(db)
+	})
+	uow.Register("TransactionDB", func(tx *sql.Tx) interface{} {
+		return database.NewTransactionDB(db)
+	})
 
 	createAccountUseCase := create_account.NewCreateAccountUseCase(accountDB, clientDB)
 	createClientUseCase := create_client.NewCreateClientUseCase(clientDB)
 	createTransactionUseCase := create_transaction.NewCreateTransactionUseCase(
-		transactionDB, accountDB, eventDispatcher, transactionCreatedEvent,
+		uow, eventDispatcher, transactionCreatedEvent,
 	)
 
 	accountHandler := web.NewWebAccountHandler(*createAccountUseCase)

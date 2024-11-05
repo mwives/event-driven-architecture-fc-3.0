@@ -1,6 +1,7 @@
 package create_transaction
 
 import (
+	"context"
 	"testing"
 
 	"github.com/mwives/microservices-fc-walletcore/internal/entity"
@@ -12,9 +13,6 @@ import (
 )
 
 func TestCreateTransactionUseCase_Execute(t *testing.T) {
-	transactionGatewayMock := &mocks.TransactionGatewayMock{}
-	transactionGatewayMock.On("Create", mock.Anything).Return(nil)
-
 	clientAccountFrom, _ := entity.NewClient("any_name", "any_email")
 	accountFrom := entity.NewAccount(clientAccountFrom)
 	accountFrom.Credit(100)
@@ -23,14 +21,14 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 	accountTo := entity.NewAccount(clientAccountTo)
 	accountTo.Credit(100)
 
-	accountGatewayMock := &mocks.AccountGatewayMock{}
-	accountGatewayMock.On("FindByID", mock.Anything).Return(accountFrom, nil)
-	accountGatewayMock.On("FindByID", mock.Anything).Return(accountTo, nil)
+	uowMock := &mocks.UowMock{}
+	uowMock.On("Do", mock.Anything, mock.Anything).Return(nil)
 
 	dispatcherMock := events.NewEventDispatcher()
 	event := event.NewTransactionCreatedEvent()
+	ctx := context.Background()
 
-	uc := NewCreateTransactionUseCase(transactionGatewayMock, accountGatewayMock, dispatcherMock, event)
+	uc := NewCreateTransactionUseCase(uowMock, dispatcherMock, event)
 
 	input := CreateTransactionInputDTO{
 		AccountIDFrom: accountFrom.ID,
@@ -38,14 +36,10 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		Amount:        10,
 	}
 
-	output, err := uc.Execute(input)
+	output, err := uc.Execute(ctx, input)
 	assert.Nil(t, err)
 
-	assert.NotEmpty(t, output.ID)
-
-	accountGatewayMock.AssertExpectations(t)
-	accountGatewayMock.AssertNumberOfCalls(t, "FindByID", 2)
-
-	transactionGatewayMock.AssertExpectations(t)
-	transactionGatewayMock.AssertNumberOfCalls(t, "Create", 1)
+	assert.NotNil(t, output)
+	uowMock.AssertExpectations(t)
+	uowMock.AssertNumberOfCalls(t, "Do", 1)
 }
