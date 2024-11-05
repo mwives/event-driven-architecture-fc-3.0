@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/mwives/microservices-fc-walletcore/internal/entity"
+	"github.com/mwives/microservices-fc-walletcore/internal/event"
 	"github.com/mwives/microservices-fc-walletcore/internal/usecase/mocks"
+	"github.com/mwives/microservices-fc-walletcore/pkg/events"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -25,7 +27,10 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 	accountGatewayMock.On("FindByID", mock.Anything).Return(accountFrom, nil)
 	accountGatewayMock.On("FindByID", mock.Anything).Return(accountTo, nil)
 
-	uc := NewCreateTransactionUseCase(transactionGatewayMock, accountGatewayMock)
+	dispatcherMock := events.NewEventDispatcher()
+	event := event.NewTransactionCreatedEvent()
+
+	uc := NewCreateTransactionUseCase(transactionGatewayMock, accountGatewayMock, dispatcherMock, event)
 
 	input := CreateTransactionInputDTO{
 		AccountIDFrom: accountFrom.ID,
