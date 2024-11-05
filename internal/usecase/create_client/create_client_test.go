@@ -14,7 +14,7 @@ func TestCreateClientUseCase_Execute(t *testing.T) {
 
 	uc := NewCreateClientUseCase(clientGatewayMock)
 
-	input := &CreateClientInputDTO{
+	input := CreateClientInputDTO{
 		Name:  "any_name",
 		Email: "any_email",
 	}
