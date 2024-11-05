@@ -27,7 +27,7 @@ func NewCreateAccountUseCase(
 	}
 }
 
-func (uc *CreateAccountUseCase) Execute(input *CreateAccountInputDTO) (*CreateAccountOutputDTO, error) {
+func (uc *CreateAccountUseCase) Execute(input CreateAccountInputDTO) (*CreateAccountOutputDTO, error) {
 	client, err := uc.ClientGateway.FindByID(input.ClientID)
 	if err != nil {
 		return nil, err
