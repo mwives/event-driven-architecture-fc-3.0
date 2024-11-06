@@ -1,10 +1,20 @@
 services:
-  mysql:
+  balance-app:
+    build: .
+    container_name: balance-go-app
+    ports:
+      - '3003:8080'
+    volumes:
+      - .:/app
+    depends_on:
+      - balance-db
+
+  balance-db:
     image: mysql:5.7
-    container_name: walletcore-balance-mysql
+    container_name: balance-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: wallet_balance
+      MYSQL_DATABASE: balance
       MYSQL_PASSWORD: root
     ports:
       - '3307:3306'
