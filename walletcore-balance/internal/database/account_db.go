@@ -23,6 +23,9 @@ func (a *AccountDB) FindByID(id string) (*entity.Account, error) {
 		QueryRow("SELECT id, balance, created_at, updated_at FROM accounts WHERE id = ?", id).
 		Scan(&account.ID, &account.Balance, &account.CreatedAt, &account.UpdatedAt)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return &entity.Account{}, nil
+		}
 		return nil, err
 	}
 

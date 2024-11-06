@@ -17,7 +17,7 @@ type AccountDbTestSuite struct {
 }
 
 func (s *AccountDbTestSuite) SetupSuite() {
-	dsn := "root:root@tcp(localhost:3307)/wallet_balance_test?parseTime=true"
+	dsn := "root:root@tcp(localhost:3307)/balance_test?parseTime=true"
 	db, err := sql.Open("mysql", dsn)
 	s.Nil(err)
 	s.db = db
@@ -69,6 +69,12 @@ func (s *AccountDbTestSuite) TestFindByID() {
 	// Compare timestamps with a tolerance of 1 second (milliseconds are not stored in MySQL)
 	s.WithinDuration(accountCreatedAtUTC, foundAccountCreatedAtUTC, time.Second)
 	s.WithinDuration(accountUpdatedAtUTC, foundAccountUpdatedAtUTC, time.Second)
+}
+
+func (s *AccountDbTestSuite) TestFindByIDNotFound() {
+	account, err := s.accountDB.FindByID("nonexistent_id")
+	s.Nil(err)
+	s.Empty(account.ID)
 }
 
 func (s *AccountDbTestSuite) TestUpdate() {
