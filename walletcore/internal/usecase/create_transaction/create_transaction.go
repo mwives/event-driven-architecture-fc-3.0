@@ -23,10 +23,10 @@ type CreateTransactionOutputDTO struct {
 }
 
 type UpdateBalanceOutputDTO struct {
-	AccountFromID      string  `json:"account_id_from"`
-	AccountToID        string  `json:"account_id_to"`
-	AccountFromBalance float64 `json:"balance_account_id_from"`
-	AccountToBalance   float64 `json:"balance_account_id_to"`
+	AccountFromID      string  `json:"account_from_id"`
+	AccountToID        string  `json:"account_to_id"`
+	AccountFromBalance float64 `json:"account_from_balance"`
+	AccountToBalance   float64 `json:"account_to_balance"`
 }
 
 type CreateTransactionUseCase struct {
