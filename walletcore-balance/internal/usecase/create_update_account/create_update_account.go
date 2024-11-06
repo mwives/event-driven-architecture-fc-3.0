@@ -1,7 +1,6 @@
 package create_update_account
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/mwives/event-driven-architecture-fc-3.0/walletcore-balance/internal/entity"
@@ -34,9 +33,7 @@ func (uc *CreateUpdateAccountUseCase) Execute(input CreateUpdateAccountInputDTO)
 		return nil, err
 	}
 
-	fmt.Printf("%v\n", account == nil)
-
-	if account == nil {
+	if account.ID == "" {
 		account = &entity.Account{
 			ID:        input.AccountID,
 			Balance:   input.Balance,
