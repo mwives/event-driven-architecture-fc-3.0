@@ -20,7 +20,7 @@ func (a *AccountDB) FindByID(id string) (*entity.Account, error) {
 	var account entity.Account
 
 	err := a.DB.
-		QueryRow("SELECT id, balance, created_at, updated_at FROM accounts").
+		QueryRow("SELECT id, balance, created_at, updated_at FROM accounts WHERE id = ?", id).
 		Scan(&account.ID, &account.Balance, &account.CreatedAt, &account.UpdatedAt)
 	if err != nil {
 		return nil, err
