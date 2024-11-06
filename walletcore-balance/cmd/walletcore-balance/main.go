@@ -9,7 +9,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mwives/event-driven-architecture-fc-3.0/walletcore-balance/internal/database"
 	"github.com/mwives/event-driven-architecture-fc-3.0/walletcore-balance/internal/event/handler"
+	"github.com/mwives/event-driven-architecture-fc-3.0/walletcore-balance/internal/usecase/find_account_by_id"
 	"github.com/mwives/event-driven-architecture-fc-3.0/walletcore-balance/internal/usecase/sync_account_balance"
+	"github.com/mwives/event-driven-architecture-fc-3.0/walletcore-balance/internal/web"
+	"github.com/mwives/event-driven-architecture-fc-3.0/walletcore-balance/internal/web/webserver"
 	"github.com/mwives/event-driven-architecture-fc-3.0/walletcore-balance/pkg/kafka"
 )
 
@@ -32,6 +35,13 @@ func main() {
 
 	accountDB := database.NewAccountDB(db)
 	createUpdateAccountUseCase := sync_account_balance.NewSyncAccountBalanceUseCase(accountDB)
+	findAccountByIdUseCase := find_account_by_id.NewFindAccountByIDUseCase(accountDB)
+
+	accountHandler := web.NewWebAccountHandler(*findAccountByIdUseCase)
+
+	webServer := webserver.NewWebServer(":8080")
+	webServer.AddHandler("/balances/{id}", accountHandler.FindAccountByID)
+	go webServer.Start()
 
 	msgChan := make(chan *ckafka.Message)
 
