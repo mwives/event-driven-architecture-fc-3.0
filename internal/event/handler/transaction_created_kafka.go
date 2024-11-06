@@ -13,15 +13,11 @@ type TransactionCreatedKafkaHandler struct {
 }
 
 func NewTransactionCreatedKafkaHandler(kafka *kafka.Producer) *TransactionCreatedKafkaHandler {
-	return &TransactionCreatedKafkaHandler{
-		Kafka: kafka,
-	}
+	return &TransactionCreatedKafkaHandler{Kafka: kafka}
 }
 
 func (h *TransactionCreatedKafkaHandler) Handle(message events.EventInterface, wg *sync.WaitGroup) {
 	defer wg.Done()
-
 	h.Kafka.Publish(message, nil, "transactions")
 	fmt.Printf("TransactionCreatedKafkaHandler: %v\n", message.GetPayload())
-
 }
