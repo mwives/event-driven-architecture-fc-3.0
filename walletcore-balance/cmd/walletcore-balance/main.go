@@ -16,7 +16,7 @@ import (
 func main() {
 	db, err := sql.Open("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s",
-		"root", "root", "balance-db", "3306", "balance",
+		"root", "root", "balance-db", "3306", "balance?parseTime=true",
 	))
 	if err != nil {
 		panic(err)
