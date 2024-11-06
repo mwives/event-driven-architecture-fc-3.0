@@ -22,22 +22,12 @@ func (s *AccountDbTestSuite) SetupSuite() {
 	s.Nil(err)
 	s.db = db
 
-	db.Exec(
-		`CREATE TABLE
-			accounts (
-				id VARCHAR(255) PRIMARY KEY,
-				balance INT,
-				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-			)`,
-	)
-
 	s.accountDB = NewAccountDB(db)
 }
 
 func (s *AccountDbTestSuite) TearDownSuite() {
 	defer s.db.Close()
-	s.db.Exec("DROP TABLE accounts")
+	s.db.Exec("TRUNCATE accounts")
 }
 
 func TestAccountDbTestSuite(t *testing.T) {
